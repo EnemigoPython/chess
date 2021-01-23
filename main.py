@@ -160,16 +160,16 @@ def move_piece(board, target, kings, origin, destination, captures, promotion):
         if destination[0] - origin[0] == 2:
             board[target.back_rank][5] = board[target.back_rank][7]
             board[target.back_rank][7] = None
-            transcript += 'O-O'
+            transcript += 'O-O '
         if origin[0] - destination[0] == 2:
             board[target.back_rank][3] = board[target.back_rank][0]
             board[target.back_rank][0] = None
-            transcript += 'O-O-O'
+            transcript += 'O-O-O '
     if target.name == 'rook' and target.castle_rights:
         target.castle_rights = False
 
     # finish transcript
-    if transcript[-1] != 'O':
+    if transcript[-2] != 'O':
         if target.name != 'pawn':
             transcript += target.name[0].upper() if target.name != 'knight' else 'N'
         transcript += f'x{coords_to_notation(destination)} ' if board[destination[1]][destination[0]] else f'{coords_to_notation(destination)} '
