@@ -1,5 +1,5 @@
 # chess
-A recreation of chess in Pygame.
+Local chess game with full ruleset, made in Pygame.
 
 # controls:
 SPACE: flip board
