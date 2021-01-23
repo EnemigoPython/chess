@@ -10,6 +10,8 @@ A: auto-flip board after each turn
 
 1-4: change promotion (1 = Queen, 2 = Knight, 3 = Rook, 4 = Bishop)
 
+P: print game transcript to terminal
+
 # files:
 FreeSerif-4aeK.ttf: font file that is used for text and the unicode images of the chess pieces.
 
