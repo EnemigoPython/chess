@@ -14,6 +14,15 @@ DARK = (87, 58, 46)
 GREEN = (0, 255, 0)
 RED = (215, 0, 0)
 ORANGE = (255, 165, 0)
+transcript, turn_number = '', 0
+
+
+def coords_to_notation(coords):
+    return f'{chr(97 + coords[0])}{8 - coords[1]}'
+
+
+def notation_to_coords(notation):
+    return ord(notation[0]) - 97, 8 - int(notation[1])
 
 
 def reset_board(with_pieces=True):
@@ -120,6 +129,12 @@ def draw_captures(screen, font, captures, flipped):
 
 
 def move_piece(board, target, kings, origin, destination, captures, promotion):
+    global transcript, turn_number
+    # start transcript
+    if target.colour == 'white':
+        turn_number += 1
+        transcript += f'{turn_number}. '
+
     # piece move conditions
     for row in board:
         for piece in row:
@@ -145,11 +160,19 @@ def move_piece(board, target, kings, origin, destination, captures, promotion):
         if destination[0] - origin[0] == 2:
             board[target.back_rank][5] = board[target.back_rank][7]
             board[target.back_rank][7] = None
+            transcript += 'O-O'
         if origin[0] - destination[0] == 2:
             board[target.back_rank][3] = board[target.back_rank][0]
             board[target.back_rank][0] = None
+            transcript += 'O-O-O'
     if target.name == 'rook' and target.castle_rights:
         target.castle_rights = False
+
+    # finish transcript
+    if transcript[-1] != 'O':
+        if target.name != 'pawn':
+            transcript += target.name[0].upper() if target.name != 'knight' else 'N'
+        transcript += f'x{coords_to_notation(destination)} ' if board[destination[1]][destination[0]] else f'{coords_to_notation(destination)} '
 
     # add any existing piece to captures list
     if board[destination[1]][destination[0]]:
@@ -169,7 +192,10 @@ def move_piece(board, target, kings, origin, destination, captures, promotion):
 
 
 def draw_check(screen, board, kings, flipped, turn, checkmate):
-    king = kings[0 if turn == 'white' else 1]
+    if checkmate:
+        king = kings[1 if turn == 'white' else 0]
+    else:
+        king = kings[0 if turn == 'white' else 1]
     if flipped:
         pg.draw.circle(screen, RED if checkmate else ORANGE, ((65 + ((7 - king[0]) * 50), 65 + ((7 - king[1]) * 50))),
                        25, width=3)
@@ -178,24 +204,20 @@ def draw_check(screen, board, kings, flipped, turn, checkmate):
 
 
 def checkmate(board, turn, kings):
+    global transcript
     for y, row in enumerate(board):
         for x, square in enumerate(row):
             if square and square.colour != turn:
                 moves = square.find_moves(board, (x, y), kings, True)
                 if moves:
+                    transcript = transcript[:-1] + '+ '
                     return False
+    transcript = transcript[:-1] + '# '
     return True
 
 
-def coords_to_notation(coords):
-    return f'{chr(65 + coords[0])}{8 - coords[1]}'
-
-
-def notation_to_coords(notation):
-    return ord(notation[0]) - 65, 8 - int(notation[1])
-
-
 def main():
+    global transcript, turn_number
     # window init
     pg.init()
     clock = pg.time.Clock()
@@ -250,11 +272,11 @@ def main():
                                 playing = False
                                 target_square = None
                             else:
-                                if auto_flip and board_flipped == (turn == 'black'):
+                                turn = 'black' if turn == 'white' else 'white'
+                                if auto_flip and board_flipped == (turn == 'white'):
                                     board_flipped = not board_flipped
                                     if target_square:
                                         true_target = 7 - true_target[0], 7 - true_target[1]
-                            turn = 'black' if turn == 'white' else 'white'
                             legal_moves = []
                         else:
                             target_square = None
@@ -276,6 +298,7 @@ def main():
                     target_square = None
                     captures = []
                     playing = True
+                    transcript, turn_number = '', 0
                 if event.key == pg.K_a:
                     auto_flip = not auto_flip
                 if event.key == pg.K_1:
@@ -286,6 +309,8 @@ def main():
                     promotion = 'rook'
                 if event.key == pg.K_4:
                     promotion = 'bishop'
+                if event.key == pg.K_p:
+                    print(transcript)
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
