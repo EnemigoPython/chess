@@ -1,5 +1,5 @@
 # chess
-A recreation of chess in Pygame
+A recreation of chess in Pygame.
 
 # controls:
 SPACE: flip board
