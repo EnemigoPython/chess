@@ -13,7 +13,7 @@ A: auto-flip board after each turn
 # files:
 FreeSerif-4aeK.ttf: font file that is used for text and the unicode images of the chess pieces.
 
-chess_piece_king.png: thumbnail image
+chess_piece_king.png: window icon image
 
 main.py: main execution file
 
