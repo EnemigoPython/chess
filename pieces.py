@@ -27,7 +27,7 @@ class Piece:
                     king_pos = coords if king == (x, y) else king
                     if not board[king[1]][king[0]].in_check(board, king_pos, moved_from=location, moved_to=coords):
                         legal_moves.append(coords)
-                    if square and square.colour != self.colour or not legal_moves and not check:
+                    if square and square.colour != self.colour or coords not in legal_moves and not check:
                         continue
                     while self.unbounded or self.name == 'pawn' and self.double_move:
                         coords = coords[0] + x2, coords[1] + y2
