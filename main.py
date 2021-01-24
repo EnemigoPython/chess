@@ -149,6 +149,7 @@ def move_piece(board, target, kings, origin, destination, captures, promotion):
         if origin[0] != destination[0] and not board[destination[1]][destination[0]]:
             captures.append(board[destination[1] - target.direction][destination[0]])
             board[destination[1] - target.direction][destination[0]] = None
+            transcript += coords_to_notation(origin)[0]
         if destination[1] == (0 if target.colour == 'white' else 7):
             promoting = True
             piece_dict = {'queen': pieces.Queen(target.colour), 'knight': pieces.Knight(target.colour),
@@ -172,6 +173,8 @@ def move_piece(board, target, kings, origin, destination, captures, promotion):
     if transcript[-2] != 'O':
         if target.name != 'pawn':
             transcript += target.name[0].upper() if target.name != 'knight' else 'N'
+        elif board[destination[1]][destination[0]]:
+            transcript += coords_to_notation(origin)[0]
         transcript += f'x{coords_to_notation(destination)} ' if board[destination[1]][destination[0]] else f'{coords_to_notation(destination)} '
 
     # add any existing piece to captures list
@@ -183,6 +186,7 @@ def move_piece(board, target, kings, origin, destination, captures, promotion):
         board[destination[1]][destination[0]] = target
     else:
         board[destination[1]][destination[0]] = piece_dict[promotion]
+        transcript += f'={promotion[0].upper()} ' if promotion != 'knight' else '=N'
     board[origin[1]][origin[0]] = None
 
     # any checks with new board status
