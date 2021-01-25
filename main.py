@@ -186,7 +186,7 @@ def move_piece(board, target, kings, origin, destination, captures, promotion):
         board[destination[1]][destination[0]] = target
     else:
         board[destination[1]][destination[0]] = piece_dict[promotion]
-        transcript += f'={promotion[0].upper()} ' if promotion != 'knight' else '=N'
+        transcript = transcript[:-1] + f'={promotion[0].upper()} ' if promotion != 'knight' else '=N '
     board[origin[1]][origin[0]] = None
 
     # any checks with new board status
